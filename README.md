@@ -1,6 +1,6 @@
 # SalaryComparer
 
-Simple tool to compare two UK salaries.
+Simple tool to compare two salaries using Scottish tax rates for 2019/2020.
 
 ## Usage
 
