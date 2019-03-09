@@ -21,13 +21,33 @@ namespace SalaryComparer
             this.EmployerContribution = new PensionContribution(employerPensionPct, amount);
         }
 
+        private double CalculatePersonalAllowance(double salary)
+        {
+            var personalAllowance = 12_500;
+            var Limit = 100_000;
+            if (salary <= Limit)
+            {
+                return personalAllowance;
+            }
+            else if (salary > Limit && salary <= (Limit + (personalAllowance * 2)))
+            {
+                var reducedAllowance = (int)(salary - Limit) / 2;
+                return reducedAllowance;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         private double CalculateIncomeTax(double salary)
         {
+            var personalAllowance = CalculatePersonalAllowance(salary);
             var output = 0.0;
             // Base
-            output += CalculateBand(salary, 0.0, 0, 12_500);
+            output += CalculateBand(salary, 0.0, 0, personalAllowance);
             // Starter Rate
-            output += CalculateBand(salary, 0.19, 12_500, 14_549);
+            output += CalculateBand(salary, 0.19, personalAllowance, 14_549);
             // Basic Rate
             output += CalculateBand(salary, 0.20, 14_549, 24_944);
             // Intermediate Rate
