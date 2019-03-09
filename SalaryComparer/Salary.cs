@@ -6,11 +6,12 @@ namespace SalaryComparer
         public PensionContribution EmployeeContribution { get; }
         public PensionContribution EmployerContribution { get; }
         public double TotalPensionContribution => EmployeeContribution.Amount + EmployerContribution.Amount;
-        public double TotalIncomeTax => CalculateIncomeTax(this.Amount - this.EmployeeContribution.Amount);
-        public double TotalNationalInsurance => CalculateNationalInsurance(this.Amount - this.EmployeeContribution.Amount);
-        public double TotalStudentLoan => CalculateStudentLoan(this.Amount - this.EmployeeContribution.Amount);
+        public double AdjustedNetIncome => this.Amount - EmployeeContribution.Amount;
+        public double TotalIncomeTax => CalculateIncomeTax(this.AdjustedNetIncome);
+        public double TotalNationalInsurance => CalculateNationalInsurance(this.AdjustedNetIncome);
+        public double TotalStudentLoan => CalculateStudentLoan(this.AdjustedNetIncome);
         public double TotalDeductions => this.TotalIncomeTax + this.TotalNationalInsurance + this.TotalStudentLoan;
-        public double TakeHome => this.Amount - this.EmployeeContribution.Amount - this.TotalDeductions;
+        public double TakeHome => this.AdjustedNetIncome - this.TotalDeductions;
         public double NetGain => this.TakeHome + this.TotalPensionContribution;
 
         public Salary(double amount, double pensionPct, double employerPensionPct)
