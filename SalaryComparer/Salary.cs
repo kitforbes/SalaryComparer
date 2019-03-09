@@ -24,9 +24,9 @@ namespace SalaryComparer
         {
             var output = 0.0;
             // Base
-            output += CalculateBand(salary, 0.0, 0, 12_150);
+            output += CalculateBand(salary, 0.0, 0, 12_500);
             // Starter Rate
-            output += CalculateBand(salary, 0.19, 12_150, 14_549);
+            output += CalculateBand(salary, 0.19, 12_500, 14_549);
             // Basic Rate
             output += CalculateBand(salary, 0.20, 14_549, 24_944);
             // Intermediate Rate
