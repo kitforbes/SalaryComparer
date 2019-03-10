@@ -6,8 +6,8 @@ namespace SalaryComparer
     {
         static void Main(string[] args)
         {
-            var current = new Salary(double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]));
-            var proposed = new Salary(double.Parse(args[3]), double.Parse(args[4]), double.Parse(args[5]));
+            var current = new Salary(double.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), true);
+            var proposed = new Salary(double.Parse(args[3]), double.Parse(args[4]), double.Parse(args[5]), true);
 
             WriteToConsole($@"
                               |   Current   |  Proposed   | Difference  |
@@ -18,7 +18,11 @@ current.EmployeeContribution.Amount, proposed.EmployeeContribution.Amount, propo
             WriteCurrencyLine("Employer Pension Contribution", new[] { current.EmployerContribution.Amount, proposed.EmployerContribution.Amount, proposed.EmployerContribution.Amount - current.EmployerContribution.Amount });
             WriteCurrencyLine("Income Tax                   ", new[] { current.TotalIncomeTax, proposed.TotalIncomeTax, proposed.TotalIncomeTax - current.TotalIncomeTax });
             WriteCurrencyLine("National Insurance           ", new[] { current.TotalNationalInsurance, proposed.TotalNationalInsurance, proposed.TotalNationalInsurance - current.TotalNationalInsurance });
-            WriteCurrencyLine("Student Loan                 ", new[] { current.TotalStudentLoan, proposed.TotalStudentLoan, proposed.TotalStudentLoan - current.TotalStudentLoan });
+            if (current.StudentLoan || proposed.StudentLoan)
+            {
+                WriteCurrencyLine("Student Loan                 ", new[] { current.TotalStudentLoan, proposed.TotalStudentLoan, proposed.TotalStudentLoan - current.TotalStudentLoan });
+            }
+
             WriteToConsole("------------------------------|-------------|-------------|-------------|");
             WriteCurrencyLine("Total Deductions             ", new[] { current.TotalDeductions, proposed.TotalDeductions, proposed.TotalDeductions - current.TotalDeductions });
             WriteCurrencyLine("Total Pension Contribution   ", new[] { current.TotalPensionContribution, proposed.TotalPensionContribution, proposed.TotalPensionContribution - current.TotalPensionContribution });

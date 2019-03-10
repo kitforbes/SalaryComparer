@@ -3,20 +3,22 @@ namespace SalaryComparer
     public class Salary
     {
         public double Amount { get; }
+        public bool StudentLoan { get; }
         public PensionContribution EmployeeContribution { get; }
         public PensionContribution EmployerContribution { get; }
         public double TotalPensionContribution => EmployeeContribution.Amount + EmployerContribution.Amount;
         public double AdjustedNetIncome => this.Amount - EmployeeContribution.Amount;
         public double TotalIncomeTax => CalculateIncomeTax(this.AdjustedNetIncome);
         public double TotalNationalInsurance => CalculateNationalInsurance(this.AdjustedNetIncome);
-        public double TotalStudentLoan => CalculateStudentLoan(this.AdjustedNetIncome);
+        public double TotalStudentLoan => this.StudentLoan ? CalculateStudentLoan(this.AdjustedNetIncome) : 0;
         public double TotalDeductions => this.TotalIncomeTax + this.TotalNationalInsurance + this.TotalStudentLoan;
         public double TakeHome => this.AdjustedNetIncome - this.TotalDeductions;
         public double NetGain => this.TakeHome + this.TotalPensionContribution;
 
-        public Salary(double amount, double pensionPct, double employerPensionPct)
+        public Salary(double amount, double pensionPct, double employerPensionPct, bool studentLoan)
         {
             this.Amount = amount;
+            this.StudentLoan = studentLoan;
             this.EmployeeContribution = new PensionContribution(pensionPct, amount);
             this.EmployerContribution = new PensionContribution(employerPensionPct, amount);
         }
