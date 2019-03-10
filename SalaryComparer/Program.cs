@@ -68,10 +68,7 @@ namespace SalaryComparer
         {
             if (values.Count == 0)
             {
-                return new List<double>
-                {
-                    Math.Round(values[0]),
-                };
+                return values;
             }
 
             var results = new List<double>
