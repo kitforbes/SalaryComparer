@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
@@ -36,8 +37,6 @@ namespace SalaryComparer
         private static void PrintSummary(IList<Salary> salaries)
         {
             var separator = "|";
-            var showDiff = salaries.Count == 2;
-
             var heading = $"                               {separator}";
             foreach (var salary in salaries)
             {
@@ -46,26 +45,65 @@ namespace SalaryComparer
 
             WriteToConsole(heading);
             WriteDividingLine(salaries.Count, separator);
-            WriteCurrencyLine("Salary", salaries.Select(x => x.Amount).ToArray(), separator);
-            WriteCurrencyLine("Pension Contribution", salaries.Select(x => x.EmployeeContribution.Amount).ToArray(), separator);
-            WriteCurrencyLine("Employer Pension Contribution", salaries.Select(x => x.EmployerContribution.Amount).ToArray(), separator);
-            WriteCurrencyLine("Income Tax", salaries.Select(x => x.TotalIncomeTax).ToArray(), separator);
-            WriteCurrencyLine("National Insurance", salaries.Select(x => x.TotalNationalInsurance).ToArray(), separator);
-            WriteCurrencyLine("Student Loan", salaries.Select(x => x.TotalStudentLoan).ToArray(), separator);
+
+            WriteCurrencyLine("Salary", GetDifference(salaries.Select(x => x.Amount).ToList()), separator);
+            WriteCurrencyLine("Pension Contribution", GetDifference(salaries.Select(x => x.EmployeeContribution.Amount).ToList()), separator);
+            WriteCurrencyLine("Employer Pension Contribution", GetDifference(salaries.Select(x => x.EmployerContribution.Amount).ToList()), separator);
+            WriteCurrencyLine("Income Tax", GetDifference(salaries.Select(x => x.TotalIncomeTax).ToList()), separator);
+            WriteCurrencyLine("National Insurance", GetDifference(salaries.Select(x => x.TotalNationalInsurance).ToList()), separator);
+            WriteCurrencyLine("Student Loan", GetDifference(salaries.Select(x => x.TotalStudentLoan).ToList()), separator);
+
             WriteDividingLine(salaries.Count, separator);
-            WriteCurrencyLine("Total Deductions", salaries.Select(x => x.TotalDeductions).ToArray(), separator);
-            WriteCurrencyLine("Total Pension Contribution", salaries.Select(x => x.TotalPensionContribution).ToArray(), separator);
-            WriteCurrencyLine("Take Home", salaries.Select(x => x.TakeHome).ToArray(), separator);
+
+            WriteCurrencyLine("Total Deductions", GetDifference(salaries.Select(x => x.TotalDeductions).ToList()), separator);
+            WriteCurrencyLine("Total Pension Contribution", GetDifference(salaries.Select(x => x.TotalPensionContribution).ToList()), separator);
+            WriteCurrencyLine("Take Home", GetDifference(salaries.Select(x => x.TakeHome).ToList()), separator);
+
             WriteDividingLine(salaries.Count, separator);
-            WriteCurrencyLine("Net Gain", salaries.Select(x => x.NetGain).ToArray(), separator);
+
+            WriteCurrencyLine("Net Gain", GetDifference(salaries.Select(x => x.NetGain).ToList()), separator);
         }
 
-        private static void WriteCurrencyLine(string lineTitle, double[] items, string separator = "|")
+        private static IList<double> GetDifference(IList<double> values)
         {
-            var output = $"{lineTitle,-30} {separator}";
-            foreach (var item in items)
+            if (values.Count == 0)
             {
-                output += $" {item,11:C} {separator}";
+                return new List<double>
+                {
+                    Math.Round(values[0]),
+                };
+            }
+
+            var results = new List<double>
+            {
+                Math.Round(values[0]),
+            };
+
+            for (int i = 1; i < values.Count; i++)
+            {
+                results.Add(Math.Round(values[i] - values[0]));
+            }
+
+            return results;
+        }
+
+        private static void WriteCurrencyLine(string lineTitle, IList<double> items, string separator = "|")
+        {
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            var output = $"{lineTitle,-30} {separator}";
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (i == 0)
+                {
+                    FormattableString data = $" {items[i],11:C0} {separator}";
+                    output += data.ToString(culture);
+                }
+                else
+                {
+                    var symbol = items[i] > 0 ? "+" : " ";
+                    var value = $"{symbol}{items[i]:C0}".ToString(culture);
+                    output += $" {value,11} {separator}";
+                }
             }
 
             WriteToConsole(output);

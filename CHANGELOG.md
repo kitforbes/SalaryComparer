@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 - Move salary definitions into `appsettings.json` file
+- Display +/- for each additional salary
 
 ## [v0.1.0] (2019-03-10)
 
