@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Move salary definitions into `appsettings.json` file
 - Display +/- for each additional salary
+- Add logger interface and `ConsoleLogger` class
 
 ## [v0.1.0] (2019-03-10)
 

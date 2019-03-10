@@ -10,6 +10,7 @@ namespace SalaryComparer
     class Program
     {
         private static IConfigurationRoot _configuration;
+        private static ILogger _logger;
 
         static void Main(string[] args)
         {
@@ -17,6 +18,8 @@ namespace SalaryComparer
                 .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
+
+            _logger = new ConsoleLogger();
 
             var salariesConfiguration = _configuration.GetSection("Salaries").GetChildren();
             var salaries = new List<Salary>();
@@ -31,10 +34,10 @@ namespace SalaryComparer
                 salaries.Add(new Salary(name, amount, employeePensionContribution, employerPensionContribution, studentLoan));
             }
 
-            PrintSummary(salaries);
+            PrintSummary(salaries, _logger);
         }
 
-        private static void PrintSummary(IList<Salary> salaries)
+        private static void PrintSummary(IList<Salary> salaries, ILogger logger)
         {
             var separator = "|";
             var heading = $"                               {separator}";
@@ -43,25 +46,25 @@ namespace SalaryComparer
                 heading += $" {salary.Name,-11} {separator}";
             }
 
-            WriteToConsole(heading);
-            WriteDividingLine(salaries.Count, separator);
+            _logger.Information(heading);
+            WriteDividingLine(salaries.Count, logger, separator);
 
-            WriteCurrencyLine("Salary", GetDifference(salaries.Select(x => x.Amount).ToList()), separator);
-            WriteCurrencyLine("Pension Contribution", GetDifference(salaries.Select(x => x.EmployeeContribution.Amount).ToList()), separator);
-            WriteCurrencyLine("Employer Pension Contribution", GetDifference(salaries.Select(x => x.EmployerContribution.Amount).ToList()), separator);
-            WriteCurrencyLine("Income Tax", GetDifference(salaries.Select(x => x.TotalIncomeTax).ToList()), separator);
-            WriteCurrencyLine("National Insurance", GetDifference(salaries.Select(x => x.TotalNationalInsurance).ToList()), separator);
-            WriteCurrencyLine("Student Loan", GetDifference(salaries.Select(x => x.TotalStudentLoan).ToList()), separator);
+            WriteCurrencyLine("Salary", GetDifference(salaries.Select(x => x.Amount).ToList()), logger, separator);
+            WriteCurrencyLine("Pension Contribution", GetDifference(salaries.Select(x => x.EmployeeContribution.Amount).ToList()), logger, separator);
+            WriteCurrencyLine("Employer Pension Contribution", GetDifference(salaries.Select(x => x.EmployerContribution.Amount).ToList()), logger, separator);
+            WriteCurrencyLine("Income Tax", GetDifference(salaries.Select(x => x.TotalIncomeTax).ToList()), logger, separator);
+            WriteCurrencyLine("National Insurance", GetDifference(salaries.Select(x => x.TotalNationalInsurance).ToList()), logger, separator);
+            WriteCurrencyLine("Student Loan", GetDifference(salaries.Select(x => x.TotalStudentLoan).ToList()), logger, separator);
 
-            WriteDividingLine(salaries.Count, separator);
+            WriteDividingLine(salaries.Count, logger, separator);
 
-            WriteCurrencyLine("Total Deductions", GetDifference(salaries.Select(x => x.TotalDeductions).ToList()), separator);
-            WriteCurrencyLine("Total Pension Contribution", GetDifference(salaries.Select(x => x.TotalPensionContribution).ToList()), separator);
-            WriteCurrencyLine("Take Home", GetDifference(salaries.Select(x => x.TakeHome).ToList()), separator);
+            WriteCurrencyLine("Total Deductions", GetDifference(salaries.Select(x => x.TotalDeductions).ToList()), logger, separator);
+            WriteCurrencyLine("Total Pension Contribution", GetDifference(salaries.Select(x => x.TotalPensionContribution).ToList()), logger, separator);
+            WriteCurrencyLine("Take Home", GetDifference(salaries.Select(x => x.TakeHome).ToList()), logger, separator);
 
-            WriteDividingLine(salaries.Count, separator);
+            WriteDividingLine(salaries.Count, logger, separator);
 
-            WriteCurrencyLine("Net Gain", GetDifference(salaries.Select(x => x.NetGain).ToList()), separator);
+            WriteCurrencyLine("Net Gain", GetDifference(salaries.Select(x => x.NetGain).ToList()), logger, separator);
         }
 
         private static IList<double> GetDifference(IList<double> values)
@@ -84,7 +87,7 @@ namespace SalaryComparer
             return results;
         }
 
-        private static void WriteCurrencyLine(string lineTitle, IList<double> items, string separator = "|")
+        private static void WriteCurrencyLine(string lineTitle, IList<double> items, ILogger logger, string separator = "|")
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             var output = $"{lineTitle,-30} {separator}";
@@ -103,10 +106,10 @@ namespace SalaryComparer
                 }
             }
 
-            WriteToConsole(output);
+            logger.Information(output);
         }
 
-        private static void WriteDividingLine(int columns, string separator = "|")
+        private static void WriteDividingLine(int columns, ILogger logger, string separator = "|")
         {
             var output = $"-------------------------------{separator}";
             for (int i = 0; i < columns; i++)
@@ -114,12 +117,7 @@ namespace SalaryComparer
                 output += $"-------------{separator}";
             }
 
-            WriteToConsole(output);
-        }
-
-        private static void WriteToConsole(string message)
-        {
-            Console.WriteLine(message);
+            logger.Information(output);
         }
     }
 }
