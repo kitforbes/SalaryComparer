@@ -12,7 +12,7 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-dotnet run --project .\SalaryComparer $args
+dotnet run --project .\SalaryComparer # $args
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }

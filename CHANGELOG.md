@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Move salary definitions into `appsettings.json` file
+
 ## [v0.1.0] (2019-03-10)
 
 - Create project to compare two salaries with Scottish tax system
