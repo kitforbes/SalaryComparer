@@ -6,14 +6,21 @@ ARG Configuration=Release
 WORKDIR /src
 COPY *.sln ./
 COPY SalaryComparer/SalaryComparer.csproj SalaryComparer/
-RUN dotnet restore
-COPY . .
+COPY SalaryComparer.Core/SalaryComparer.Core.csproj SalaryComparer.Core/
+COPY SalaryComparer.Core.Tests/SalaryComparer.Core.Tests.csproj SalaryComparer.Core.Tests/
+RUN dotnet restore /nologo
+COPY . ./
 WORKDIR /src/SalaryComparer
-RUN dotnet build -c $Configuration -o /app
+RUN dotnet build -c $Configuration -o /app /nologo
+
+FROM build AS test
+WORKDIR /src
+ARG Configuration=Release
+RUN dotnet test /nologo
 
 FROM build AS publish
 ARG Configuration=Release
-RUN dotnet publish -c $Configuration -o /app
+RUN dotnet publish -c $Configuration -o /app /nologo
 
 FROM base AS final
 WORKDIR /app

@@ -1,0 +1,15 @@
+.circleci/
+.git/
+.vscode/
+.vs/
+**/bin/
+**/obj/
+
+.dockerignore
+.editorconfig
+.gitattributes
+.gitignore
+build*.cmd
+build*.ps1
+Dockerfile
+*.md

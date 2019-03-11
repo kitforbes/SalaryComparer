@@ -1,4 +1,4 @@
-namespace SalaryComparer
+namespace SalaryComparer.Core
 {
     public class Salary
     {

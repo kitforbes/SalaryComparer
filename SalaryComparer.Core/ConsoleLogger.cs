@@ -1,6 +1,6 @@
 using System;
 
-namespace SalaryComparer
+namespace SalaryComparer.Core
 {
     public class ConsoleLogger : ILogger
     {
