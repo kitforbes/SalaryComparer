@@ -44,7 +44,7 @@ namespace SalaryComparer
             var heading = $"                               {separator}";
             foreach (var salary in salaries)
             {
-                heading += $" {salary.Name,-11} {separator}";
+                heading += $" {salary.Name.Truncate(11),-11} {separator}";
             }
 
             _logger.Information(heading);
@@ -91,7 +91,7 @@ namespace SalaryComparer
         private static void WriteCurrencyLine(string lineTitle, IList<double> items, ILogger logger, string separator = "|")
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            var output = $"{lineTitle,-30} {separator}";
+            var output = $"{lineTitle.Truncate(30),-30} {separator}";
             for (int i = 0; i < items.Count; i++)
             {
                 if (i == 0)
