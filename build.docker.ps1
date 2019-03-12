@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Set-Location -Path $PSScriptRoot
 
-docker build -t salary-comparer .
+docker build --tag salary-comparer .
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }

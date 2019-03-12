@@ -11,18 +11,18 @@ COPY SalaryComparer.Core.Tests/SalaryComparer.Core.Tests.csproj SalaryComparer.C
 RUN dotnet restore /nologo
 COPY . ./
 WORKDIR /src/SalaryComparer
-RUN dotnet build -c $Configuration -o /app /nologo
+RUN dotnet build --configuration $Configuration --output /app --no-restore /nologo
 
 FROM build AS test
 WORKDIR /src
 ARG Configuration=Release
-RUN dotnet test /nologo
+RUN dotnet test --configuration $Configuration --no-restore /nologo
 
 FROM build AS publish
 ARG Configuration=Release
-RUN dotnet publish -c $Configuration -o /app /nologo
+RUN dotnet publish --configuration $Configuration --output /app --no-restore /nologo
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app ./
 ENTRYPOINT ["dotnet", "SalaryComparer.dll"]
