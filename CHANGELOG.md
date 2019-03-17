@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Update Dockerfile to use Microsoft Container Registry
 - Move salary definitions into `appsettings.json` file
 - Display +/- for each additional salary
 - Add logger interface and `ConsoleLogger` class

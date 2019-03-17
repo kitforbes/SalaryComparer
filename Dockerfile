@@ -1,7 +1,7 @@
-FROM microsoft/dotnet:2.2-sdk AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-alpine AS base
 WORKDIR /app
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-alpine AS build
 ARG Configuration=Release
 WORKDIR /src
 COPY *.sln ./
