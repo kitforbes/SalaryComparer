@@ -51,7 +51,9 @@ namespace SalaryComparer
             WriteDividingLine(salaries.Count, logger, separator);
 
             WriteCurrencyLine("Salary", GetDifference(salaries.Select(x => x.Amount).ToList()), logger, separator);
+            WritePercentageLine("Pension Contribution", GetDifference(salaries.Select(x => x.EmployeeContribution.Percentage).ToList(), false), logger, separator);
             WriteCurrencyLine("Pension Contribution", GetDifference(salaries.Select(x => x.EmployeeContribution.Amount).ToList()), logger, separator);
+            WritePercentageLine("Employer Pension Contribution", GetDifference(salaries.Select(x => x.EmployerContribution.Percentage).ToList(), false), logger, separator);
             WriteCurrencyLine("Employer Pension Contribution", GetDifference(salaries.Select(x => x.EmployerContribution.Amount).ToList()), logger, separator);
             WriteCurrencyLine("Income Tax", GetDifference(salaries.Select(x => x.TotalIncomeTax).ToList()), logger, separator);
             WriteCurrencyLine("National Insurance", GetDifference(salaries.Select(x => x.TotalNationalInsurance).ToList()), logger, separator);
@@ -62,27 +64,40 @@ namespace SalaryComparer
             WriteCurrencyLine("Total Deductions", GetDifference(salaries.Select(x => x.TotalDeductions).ToList()), logger, separator);
             WriteCurrencyLine("Total Pension Contribution", GetDifference(salaries.Select(x => x.TotalPensionContribution).ToList()), logger, separator);
             WriteCurrencyLine("Take Home", GetDifference(salaries.Select(x => x.TakeHome).ToList()), logger, separator);
+            WriteCurrencyLine("Take Home (Month)", GetDifference(salaries.Select(x => x.TakeHome / 12).ToList()), logger, separator);
 
             WriteDividingLine(salaries.Count, logger, separator);
 
             WriteCurrencyLine("Net Gain", GetDifference(salaries.Select(x => x.NetGain).ToList()), logger, separator);
         }
 
-        private static IList<double> GetDifference(IList<double> values)
+        private static IList<double> GetDifference(IList<double> values, bool round = false)
         {
             if (values.Count == 0)
             {
                 return values;
             }
 
-            var results = new List<double>
+            var results = new List<double>();
+            if (round)
             {
-                Math.Round(values[0]),
-            };
+                results.Add(Math.Round(values[0]));
+            }
+            else
+            {
+                results.Add(values[0]);
+            }
 
             for (int i = 1; i < values.Count; i++)
             {
-                results.Add(Math.Round(values[i] - values[0]));
+                if (round)
+                {
+                    results.Add(Math.Round(values[i] - values[0]));
+                }
+                else
+                {
+                    results.Add(values[i] - values[0]);
+                }
             }
 
             return results;
@@ -103,6 +118,28 @@ namespace SalaryComparer
                 {
                     var symbol = items[i] > 0 ? "+" : " ";
                     var value = $"{symbol}{items[i]:C0}".ToString(culture);
+                    output += $" {value,11} {separator}";
+                }
+            }
+
+            logger.Information(output);
+        }
+
+        private static void WritePercentageLine(string lineTitle, IList<double> items, ILogger logger, string separator = "|")
+        {
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            var output = $"{lineTitle.Truncate(30),-30} {separator}";
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (i == 0)
+                {
+                    FormattableString data = $" {items[i],11:P0} {separator}";
+                    output += data.ToString(culture);
+                }
+                else
+                {
+                    var symbol = items[i] > 0 ? "+" : " ";
+                    var value = $"{symbol}{items[i]:P0}".ToString(culture);
                     output += $" {value,11} {separator}";
                 }
             }
